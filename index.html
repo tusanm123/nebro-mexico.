@@ -1,0 +1,739 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Catálogo NEBRO México: accesorios para celular.">
+<title>NEBRO México | Accesorios para celular</title>
+
+<style>
+:root {
+  --naranja: #ff7900;
+  --oscuro: #101820;
+  --gris: #f5f6f7;
+  --verde: #08b45a;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--oscuro);
+}
+a { text-decoration: none; }
+button, input, select { font: inherit; }
+
+.aviso {
+  background: var(--oscuro);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--oscuro);
+  color: white;
+}
+nav {
+  max-width: 1200px;
+  margin: auto;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.logo {
+  color: white;
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.logo span { color: var(--naranja); }
+.enlaces { display: flex; gap: 20px; }
+.enlaces a { color: white; font-weight: bold; }
+.enlaces a:hover { color: var(--naranja); }
+
+.boton {
+  display: inline-block;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 17px;
+  color: white;
+  background: var(--verde);
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+}
+.boton:hover { filter: brightness(.92); }
+.boton-oscuro { background: #25313a; }
+
+.portada {
+  color: white;
+  background: radial-gradient(circle at 80% 30%, #795d4b, #25313a 40%, #101820 80%);
+  padding: 65px 22px;
+}
+.contenedor { max-width: 1200px; margin: auto; }
+.portada h1 {
+  font-size: clamp(38px, 6vw, 65px);
+  line-height: 1.05;
+  max-width: 750px;
+  margin: 14px 0;
+}
+.portada p {
+  max-width: 650px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #eee;
+}
+.etiqueta {
+  color: #ffad75;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.portada .boton { margin: 8px 8px 0 0; }
+
+section { padding: 42px 22px; }
+h2 { margin-top: 0; }
+.texto-secundario { color: #666; line-height: 1.6; }
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 25px 0;
+}
+.categoria {
+  border: 1px solid #ddd;
+  background: var(--gris);
+  border-radius: 10px;
+  padding: 17px 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.categoria:hover { border-color: var(--naranja); }
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 12px;
+  margin: 22px 0;
+}
+input, select {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+  padding: 13px;
+}
+.productos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+.tarjeta {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+.foto {
+  width: 100%;
+  height: 220px;
+  padding: 10px;
+  background: #f5f5f5;
+  border: 0;
+  cursor: zoom-in;
+}
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.info {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.tipo {
+  color: #d65300;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.modelo, .existencia { color: #666; font-size: 13px; }
+.info .boton { width: 100%; }
+.precio { font-weight: bold; }
+.vacio { grid-column: 1/-1; padding: 25px; }
+
+.contacto { background: var(--gris); }
+.contacto-caja {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+footer {
+  background: var(--oscuro);
+  color: white;
+  padding: 28px 22px;
+  text-align: center;
+}
+
+/* Ventana de detalles del producto */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 15px;
+  background: #000b;
+  align-items: center;
+  justify-content: center;
+}
+.modal.abierto { display: flex; }
+.modal-caja {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 1050px;
+  max-height: 95vh;
+  overflow: auto;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.cerrar {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  z-index: 2;
+  border: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: white;
+  font-size: 25px;
+  cursor: pointer;
+}
+.galeria {
+  padding: 20px;
+  background: #f5f5f5;
+}
+.imagen-grande {
+  width: 100%;
+  height: 360px;
+  object-fit: contain;
+  background: white;
+}
+.controles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.miniaturas {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.miniaturas button {
+  width: 65px;
+  height: 60px;
+  border: 2px solid transparent;
+  background: white;
+  cursor: pointer;
+}
+.miniaturas button.activa { border-color: var(--naranja); }
+.miniaturas img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.detalle { padding: 30px 25px; }
+.detalle p { line-height: 1.6; color: #555; }
+.detalle li { margin-bottom: 10px; line-height: 1.5; }
+.acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.whatsapp-flotante {
+  position: fixed;
+  z-index: 20;
+  right: 18px;
+  bottom: 18px;
+  background: var(--verde);
+  color: white;
+  border-radius: 50px;
+  padding: 15px 18px;
+  box-shadow: 0 4px 15px #0003;
+  font-weight: bold;
+}
+
+@media(max-width: 900px) {
+  .productos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media(max-width: 650px) {
+  nav { padding: 12px; }
+  .enlaces { width: 100%; justify-content: space-between; }
+  .enlaces a { font-size: 14px; }
+  section { padding: 35px 14px; }
+  .categorias { grid-template-columns: repeat(2, 1fr); }
+  .filtros { grid-template-columns: 1fr; }
+  .productos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .foto { height: 160px; }
+  .info { padding: 10px; }
+  .info h3 { font-size: 15px; }
+  .modal-caja { grid-template-columns: 1fr; }
+  .galeria { padding: 12px; }
+  .imagen-grande { height: 260px; }
+  .detalle { padding: 20px; }
+  .contacto-caja { flex-direction: column; align-items: flex-start; }
+}
+@media(max-width: 360px) {
+  .productos { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="aviso">
+  Accesorios para tu celular · Pedidos directos por WhatsApp
+</div>
+
+<header>
+  <nav>
+    <a class="logo" href="#inicio">NEB<span>RO</span></a>
+    <div class="enlaces">
+      <a href="#inicio">Inicio</a>
+      <a href="#productos">Productos</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <a class="boton" href="https://wa.me/525615864343"
+       target="_blank" rel="noopener">WhatsApp</a>
+  </nav>
+</header>
+
+<main>
+<section class="portada" id="inicio">
+  <div class="contenedor">
+    <div class="etiqueta">ACCESORIOS PARA TU DÍA A DÍA</div>
+    <h1>Tecnología y calidad en un solo lugar</h1>
+    <p>
+      Descubre los accesorios NEBRO: cargadores, cables,
+      audífonos y baterías portátiles. Consulta disponibilidad
+      y realiza tu pedido directamente por WhatsApp.
+    </p>
+    <a class="boton" href="#productos">Ver productos</a>
+    <a class="boton boton-oscuro"
+       href="https://wa.me/525615864343?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20los%20productos%20NEBRO"
+       target="_blank" rel="noopener">Contactar</a>
+  </div>
+</section>
+
+<section id="productos">
+  <div class="contenedor">
+    <h2>Nuestros productos</h2>
+    <p class="texto-secundario">
+      Explora el catálogo. Pulsa una fotografía para ampliar
+      la imagen y consultar las características del producto.
+    </p>
+
+    <div class="categorias">
+      <button class="categoria" data-cat="Cargadores">🔌 Cargadores</button>
+      <button class="categoria" data-cat="Cables">🔗 Cables</button>
+      <button class="categoria" data-cat="Audífonos">🎧 Audífonos</button>
+      <button class="categoria" data-cat="Baterías portátiles">🔋 Baterías</button>
+    </div>
+
+    <div class="filtros">
+      <input id="buscar" type="search"
+        placeholder="Buscar producto o modelo...">
+      <select id="filtro">
+        <option value="todos">Todas las categorías</option>
+        <option value="Cargadores">Cargadores</option>
+        <option value="Cables">Cables</option>
+        <option value="Audífonos">Audífonos</option>
+        <option value="Baterías portátiles">Baterías portátiles</option>
+      </select>
+    </div>
+
+    <div class="productos" id="lista"></div>
+    <p class="texto-secundario">
+      Precios y existencias sujetos a confirmación por WhatsApp.
+    </p>
+  </div>
+</section>
+
+<section class="contacto" id="contacto">
+  <div class="contenedor contacto-caja">
+    <div>
+      <h2>¿Tienes alguna pregunta?</h2>
+      <p class="texto-secundario">
+        Consulta precios, disponibilidad y detalles de los productos.
+      </p>
+      <strong>WhatsApp: +52 56 1586 4343</strong>
+    </div>
+    <a class="boton"
+       href="https://wa.me/525615864343?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20NEBRO"
+       target="_blank" rel="noopener">Escribir por WhatsApp</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="contenedor">
+    <strong>NEBRO MÉXICO</strong>
+    <p>Accesorios para celular.</p>
+    <small>© <span id="anio"></span> NEBRO México</small>
+  </div>
+</footer>
+
+<a class="whatsapp-flotante"
+   href="https://wa.me/525615864343"
+   target="_blank" rel="noopener" aria-label="Abrir WhatsApp">
+  WhatsApp
+</a>
+
+<!-- Ventana de imágenes y características -->
+<div class="modal" id="modal" role="dialog"
+     aria-modal="true" aria-labelledby="tituloDetalle">
+  <div class="modal-caja">
+    <button class="cerrar" id="cerrar" aria-label="Cerrar">×</button>
+    <div class="galeria">
+      <img class="imagen-grande" id="imagenGrande" src="" alt="">
+      <div class="controles">
+        <button class="boton boton-oscuro" id="anterior">‹ Anterior</button>
+        <span id="contador"></span>
+        <button class="boton boton-oscuro" id="siguiente">Siguiente ›</button>
+      </div>
+      <div class="miniaturas" id="miniaturas"></div>
+    </div>
+    <div class="detalle">
+      <div class="tipo" id="tipoDetalle"></div>
+      <h2 id="tituloDetalle">Producto NEBRO</h2>
+      <p id="modeloDetalle"></p>
+      <p id="descripcionDetalle"></p>
+      <h3>Características e información</h3>
+      <ul id="caracteristicas"></ul>
+      <p>
+        Confirma la compatibilidad y las especificaciones técnicas
+        exactas del modelo antes de realizar tu compra.
+      </p>
+      <div class="acciones">
+        <a class="boton" id="pedirDetalle" href="#"
+           target="_blank" rel="noopener">Consultar por WhatsApp</a>
+        <button class="boton boton-oscuro" id="seguir">
+          Seguir viendo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WHATSAPP = "https://wa.me/525615864343";
+
+/*
+  CATÁLOGO DE PRODUCTOS
+  Sustituye las URL de ejemplo por los enlaces directos
+  de tus fotografías reales.
+  Para añadir otras vistas a un producto, agrega sus URL
+  dentro de la propiedad images.
+*/
+const productos = [
+  {
+    nombre: "Cargador NEBRO",
+    modelo: "VGA-205",
+    categoria: "Cargadores",
+    imagen: "https://i.ibb.co/DPkNcLjx/VGA-205-4.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Consulta la potencia y los puertos disponibles.",
+      "Confirma la compatibilidad con tu dispositivo."
+    ]
+  },
+  {
+    nombre: "Cargador NEBRO",
+    modelo: "VGA-056T",
+    categoria: "Cargadores",
+    imagen: "https://i.ibb.co/XxYJpxTs/caja-en-mejor-definicion-202606291640.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Consulta el tipo de conexión.",
+      "Confirma la potencia antes de comprar."
+    ]
+  },
+  {
+    nombre: "Cargador NEBRO 65 W",
+    modelo: "Modelo por confirmar",
+    categoria: "Cargadores",
+    imagen: "https://nebro.shop/cdn/shop/files/quita_el_cable_y_centra_202606291631.jpg?crop=center&height=1024&v=1782772756&width=1024",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "El nombre indica una potencia anunciada de 65 W.",
+      "Confirma puertos y protocolos de carga compatibles."
+    ]
+  },
+  {
+    nombre: "Cargador GaN NEBRO 30 W",
+    modelo: "Modelo por confirmar",
+    categoria: "Cargadores",
+    imagen: "https://nebro.shop/cdn/shop/files/GaN_30W_charger_with_cable_202606291611.jpg?crop=center&height=1024&v=1782771129&width=1024",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "El nombre indica tecnología GaN y potencia anunciada de 30 W.",
+      "Confirma los protocolos y puertos compatibles."
+    ]
+  },
+  {
+    nombre: "Cable NEBRO",
+    modelo: "WD-342",
+    categoria: "Cables",
+    imagen: "https://i.ibb.co/ZRpD83XQ/WD-342-1.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma los conectores y la longitud del cable.",
+      "La carga y transferencia dependen del modelo."
+    ]
+  },
+  {
+    nombre: "Cable NEBRO",
+    modelo: "WD-338",
+    categoria: "Cables",
+    imagen: "https://i.ibb.co/wF23cXmz/WD-338-7.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma el tipo de conector.",
+      "Consulta la potencia de carga admitida."
+    ]
+  },
+  {
+    nombre: "Cable magnético USB-C NEBRO",
+    modelo: "Modelo por confirmar",
+    categoria: "Cables",
+    imagen: "https://i.ibb.co/MyFCn4Vx/dame-la-imagen-mejor-definicion-202606292014.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Cable identificado como magnético y USB-C.",
+      "Confirma compatibilidad, potencia y transferencia de datos."
+    ]
+  },
+  {
+    nombre: "Audífonos NEBRO",
+    modelo: "WE-017",
+    categoria: "Audífonos",
+    imagen: "https://nebro.shop/cdn/shop/files/WE-017_e80a09e6-5507-4531-8f1f-08c79ebdf761.jpg?crop=center&height=1024&v=1782256463&width=1024",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma el tipo de conexión.",
+      "Consulta autonomía y controles del modelo."
+    ]
+  },
+  {
+    nombre: "Audífonos inalámbricos NEBRO",
+    modelo: "Modelo por confirmar",
+    categoria: "Audífonos",
+    imagen: "https://nebro.shop/cdn/shop/files/365258ea92270dcd27f3a606c7850734.png?crop=center&height=500&v=1780415380&width=500",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Consulta la conexión y autonomía.",
+      "Confirma la compatibilidad con tu dispositivo."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-160",
+    categoria: "Baterías portátiles",
+    imagen: "https://i.ibb.co/qLtnb74q/WB-160-1.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad en mAh.",
+      "Consulta los puertos y la potencia de salida."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-161",
+    categoria: "Baterías portátiles",
+    imagen: "https://i.ibb.co/f3SvWh8/WB-161-9.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad en mAh.",
+      "Consulta puertos y compatibilidad."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-157",
+    categoria: "Baterías portátiles",
+    imagen: "https://i.ibb.co/8n3jCZ0J/WB-157-4.jpg",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad y la potencia de salida.",
+      "La cantidad de cargas depende del dispositivo."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-162",
+    categoria: "Baterías portátiles",
+    imagen: "https://nebro.shop/cdn/shop/files/WB-162-7.jpg?crop=center&height=2048&v=1790193407&width=2048",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad en mAh.",
+      "Consulta los puertos y la potencia de salida."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-014",
+    categoria: "Baterías portátiles",
+    imagen: "https://nebro.shop/cdn/shop/files/WB-014_2.jpg?crop=center&height=2048&v=1780326613&width=2048",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad en mAh.",
+      "Consulta las conexiones disponibles."
+    ]
+  },
+  {
+    nombre: "Batería portátil NEBRO",
+    modelo: "WB-155",
+    categoria: "Baterías portátiles",
+    imagen: "https://nebro.shop/cdn/shop/files/WB-155_2.jpg?crop=center&height=2048&v=1780325252&width=2048",
+    images: [],
+    precio: "Precio por confirmar",
+    caracteristicas: [
+      "Confirma la capacidad y la potencia de salida.",
+      "Consulta los dispositivos compatibles."
+    ]
+  }
+];
+
+const lista = document.getElementById("lista");
+const buscar = document.getElementById("buscar");
+const filtro = document.getElementById("filtro");
+const modal = document.getElementById("modal");
+const imagenGrande = document.getElementById("imagenGrande");
+const miniaturas = document.getElementById("miniaturas");
+let productoActivo = null;
+let imagenActiva = 0;
+let fotosActivas = [];
+
+function escapar(texto) {
+  return String(texto).replace(/[&<>"']/g, letra => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[letra]);
+}
+
+function mensajeWhatsApp(p) {
+  const mensaje =
+    "Hola, quiero información de este producto NEBRO.\n" +
+    "Producto: " + p.nombre + "\n" +
+    "Modelo: " + p.modelo + "\n" +
+    "¿Me confirmas precio, existencias y características?";
+  return WHATSAPP + "?text=" + encodeURIComponent(mensaje);
+}
+
+function mostrarProductos() {
+  const texto = buscar.value.toLowerCase().trim();
+  const categoria = filtro.value;
+
+  const encontrados = productos
+    .map((p, i) => ({...p, indice: i}))
+    .filter(p =>
+      (p.nombre + " " + p.modelo + " " + p.categoria)
+        .toLowerCase().includes(texto) &&
+      (categoria === "todos" || p.categoria === categoria)
+    );
+
+  if (!encontrados.length) {
+    lista.innerHTML = '<p class="vacio">No se encontraron productos.</p>';
+    return;
+  }
+
+  lista.innerHTML = encontrados.map(p => `
+    <article class="tarjeta">
+      <button class="foto" type="button"
+        data-abrir="${p.indice}"
+        aria-label="Ampliar ${escapar(p.nombre)}">
+        <img src="${escapar(p.imagen)}"
+          alt="${escapar(p.nombre)} ${escapar(p.modelo)}"
+          loading="lazy">
+      </button>
+      <div class="info">
+        <div class="tipo">${escapar(p.categoria)}</div>
+        <h3>${escapar(p.nombre)}</h3>
+        <div class="modelo">Modelo: ${escapar(p.modelo)}</div>
+        <div class="precio">${escapar(p.precio)}</div>
+        <div class="existencia">Disponibilidad por confirmar</div>
+        <button class="boton boton-oscuro"
+          type="button" data-abrir="${p.indice}">
+          Ver características
+        </button>
+        <a class="boton" href="${mensajeWhatsApp(p)}"
+          target="_blank" rel="noopener">
+          Pedir por WhatsApp
+        </a>
+      </div>
+    </article>
+  `).join("");
+}
+
+function seleccionarImagen(indice) {
+  if (!fotosActivas.length) return;
+  imagenActiva =
+    (indice + fotosActivas.length) % fotosActivas.length;
+  imagenGrande.src = fotosActivas[imagenActiva];
+  imagenGrande.alt = productoActivo.nombre + " fotografía " +
+    (imagenActiva + 1);
+  document.getElementById("contador").textContent =
+    "Foto " + (imagenActiva + 1) + " de " + fotosActivas.length;
+
+  miniaturas.querySelectorAll("button").forEach((b, i) => {
+    b.classList.toggle("activa", i === imagenActiva);
+  });
+}
+
+function abrirProducto(indice) {
+  const p = productos[indice];
+  if (!p) return;
+  productoActivo = p;
+  fotosActivas = [...new Set([p.imagen, ...(p.images || [])].filter(Boolean))];
+  imagenActiva = 0;
+
+  document.getElementById("tipoDetalle").textContent = p.categoria;
+  document.getElementById("tituloDetalle").textContent = p.nombre;
+  document.getElementById("modeloDetalle").textContent =
+    "Modelo: " + p.modelo;
+  
